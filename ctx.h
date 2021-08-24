@@ -2,6 +2,7 @@
 #define CTX_H
 
 #include <stdlib.h>
+#include <stdint.h>
 
 struct ctx{
 #if defined(__amd64__)
