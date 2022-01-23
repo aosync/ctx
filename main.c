@@ -4,8 +4,7 @@
 static struct ctx ctx;
 
 void second() {
-    printf("second\n");         // prints
-    ctx_jmp(&ctx,1);             // jumps back to where setjmp was called - making setjmp now return 1
+    printf("second\n");
 }
 
 void first() {
@@ -13,11 +12,15 @@ void first() {
     printf("first\n");          // does not print
 }
 
-int main() {   
-    if (!ctx_save(&ctx))
-        first();                // when executed, setjmp returned 0
-    else                        // when longjmp jumps back, setjmp returns 1
-        printf("main\n");       // prints
+int main() {
+    char *stack = malloc(8196);
+    char *end = stack + 8196;
 
+    struct ctx back;
+    ctx_link_to(&ctx, end, (void (*)(void*))first, NULL);
+
+    ctx_switch(&back, &ctx);
+
+    free(stack);
     return 0;
 }
