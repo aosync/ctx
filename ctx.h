@@ -14,7 +14,7 @@ struct ctx{
 };
 
 extern thread_local struct ctx *_ctx_new;
-extern thread_local void (*_ctx_fun)();
+extern thread_local void (*_ctx_fun)(void*);
 extern thread_local void *_ctx_args;
 
 

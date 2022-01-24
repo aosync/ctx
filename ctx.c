@@ -2,9 +2,9 @@
 
 #include <stdio.h>
 
-_Thread_local struct ctx *_ctx_new = NULL;
-_Thread_local void (*_ctx_fun)(void*) = NULL;
-_Thread_local void *_ctx_args = NULL;
+thread_local struct ctx *_ctx_new = NULL;
+thread_local void (*_ctx_fun)(void*) = NULL;
+thread_local void *_ctx_args = NULL;
 
 void
 ctx_link_to(struct ctx *ctx, char *stack, void (*fun)(void*), void *args)
