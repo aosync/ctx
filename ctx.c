@@ -33,9 +33,8 @@ void
 ctx_switch(struct ctx *from, struct ctx *to)
 {
 	to->returnback = from;
-	if(!ctx_save(from)){
+	if(!ctx_save(from))
 		ctx_jmp(to, 1);
-	}
 }
 
 void
