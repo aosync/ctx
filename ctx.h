@@ -22,6 +22,6 @@ void ctx_link_to(struct ctx *ctx, char *stack, void (*fun)(void*), void *args);
 void ctx_jmp(struct ctx *ctx, int sig);
 int ctx_save(struct ctx *ctx);
 void ctx_switch(struct ctx *from, struct ctx *to);
-void _ctx_wrap();
+void _ctx_wrap(struct ctx *ctx, void (*fun)(void*), void *args);
 
 #endif

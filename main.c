@@ -10,9 +10,9 @@ void second() {
     printf("second\n");
 }
 
-void first() {
+void first(int *i) {
     second();
-    printf("first\n");          // does not print
+    printf("first %d\n", *i);          // does not print
 }
 
 int main() {
@@ -22,14 +22,13 @@ int main() {
     char *stack = malloc(1024*9);
     #endif
     char *end = stack + 8196;
-    size_t endi = (size_t)end;
-    endi = (endi - 8) & ~0xF;
-    end = (char*)endi;
     struct ctx *ctx = ctx_create();
+
+    int i = 43;
 
 
     struct ctx *back = ctx_create();
-    ctx_link_to(ctx, end, (void (*)(void*))first, NULL);
+    ctx_link_to(ctx, end, (void (*)(void*))first, &i);
     printf("got here\n");
 
     ctx_switch(back, ctx);

@@ -47,7 +47,8 @@ ctx_sources = [
 
 ctx_asm_sources = [
 	'arch' / asm_path / 'ctx_save' + assembler[1],
-	'arch' / asm_path / 'ctx_jmp' + assembler[1]
+	'arch' / asm_path / 'ctx_jmp' + assembler[1],
+	'arch' / asm_path / 'ctx_link_to' + assembler[1]
 ]
 
 
