@@ -4,10 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 
-thread_local struct ctx *_ctx_new = NULL;
-thread_local void (*_ctx_fun)(void*) = NULL;
-thread_local void *_ctx_args = NULL;
-
 struct ctx{
 #if defined(CTX_AMD64_SYSV)
 	char regs[64]; /* rbx, rsp, rbp, r[4], rip */

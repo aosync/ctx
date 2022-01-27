@@ -3,14 +3,8 @@
 
 #include <stdlib.h>
 #include <stdint.h>
-#include "threadlocal.h"
 
 struct ctx;
-
-extern thread_local struct ctx *_ctx_new;
-extern thread_local void (*_ctx_fun)(void*);
-extern thread_local void *_ctx_args;
-
 
 /*	struct ctx has to be opaque because of the different ABIs,
 	so allocation functions are provided */
