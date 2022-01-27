@@ -1,6 +1,8 @@
 #include "ctx.h"
 #include <stdio.h>
 
+#include <sys/mman.h>
+
 void second() {
     printf("second\n");
 }
@@ -11,8 +13,11 @@ void first() {
 }
 
 int main() {
-    char *stack = malloc(8196);
+    char *stack = mmap(NULL, 1024*9, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_STACK|MAP_ANON, -1, 0);
     char *end = stack + 8196;
+    size_t endi = (size_t)end;
+    endi = (endi - 8) & ~0xF;
+    end = (char*)endi;
     struct ctx *ctx = ctx_create();
 
 
@@ -24,6 +29,6 @@ int main() {
 
     ctx_destroy(back);
     ctx_destroy(ctx);
-    free(stack);
+    munmap(stack, 1024*9);
     return 0;
 }
