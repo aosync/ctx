@@ -27,8 +27,12 @@ int main() {
     int i = 43;
 
 
+    struct ctx_stackd s;
+    s.stack_addr[CTX_STACK_HIGH] = end;
+    s.stack_addr[CTX_STACK_LOW] = stack;
+    s.stack_addr[CTX_STACK_GUARD] = stack + 1024;
     struct ctx *back = ctx_create();
-    ctx_link_to(ctx, end, (void (*)(void*))first, &i);
+    ctx_link_to(ctx, &s, (void (*)(void*))first, &i);
     printf("got here\n");
 
     ctx_switch(back, ctx);

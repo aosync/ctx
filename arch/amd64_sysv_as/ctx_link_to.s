@@ -1,7 +1,8 @@
 	.global ctx_link_to
 	.type ctx_link_to, @function
 ctx_link_to:
-	movq %rsi, 8(%rdi)	# stack in rsp
+	movq (%rsi), %r11
+	movq %r11, 8(%rdi)	# stack in rsp
 	movq %rdx, (%rdi)	# fun in rbx
 	movq %rcx, 24(%rdi)	# args in r12
 	movq %rdi, 32(%rdi)	# ctx in r13

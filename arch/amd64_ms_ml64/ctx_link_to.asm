@@ -14,7 +14,13 @@ ctx_wrap2 ENDP
 
 PUBLIC ctx_link_to
 ctx_link_to PROC
-	mov [rcx+32], rdx	; stack in rsp
+	mov r11, [rdx]
+	mov [rcx+240], r11	; stack high
+	mov [rcx+32], r11	; stack in rsp
+	mov r11, [rdx+8]
+	mov [rcx+248], r11	; stack low
+	mov r11, [rdx+16]
+	mov [rcx+256], r11	; stack guard
 	mov [rcx], r8		; fun in rbx
 	mov [rcx+16], r9	; args in rdi
 	mov [rcx+24], rcx	; ctx in rsi

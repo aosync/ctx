@@ -23,5 +23,12 @@ ctx_save:
 	movaps %xmm13, 192(%rcx)
 	movaps %xmm14, 208(%rcx)
 	movaps %xmm15, 224(%rcx)
+	movq %gs:0x30, %r8	# TIB pointer
+	movq 0x8(%r8), %r9
+	movq %r9, 240(%rcx)	# save stack high
+	movq 0x10(%r8), %r9
+	movq %r9, 248(%rcx)	# save stack low
+	movq 0x1478(%r8), %r9
+	movq %r9, 256(%rcx)	# save stack guard
 	xorq %rax, %rax
 	ret

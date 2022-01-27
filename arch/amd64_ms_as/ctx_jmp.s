@@ -20,5 +20,12 @@ ctx_jmp:
     movaps 192(%rcx), %xmm13
     movaps 208(%rcx), %xmm14
     movaps 224(%rcx), %xmm15
-    mov %rdx, %rax
+    movq %gs:0x30, %r8		# TIB pointer
+    movq 240(%rcx), %r9
+    movq %r9, 0x8(%r8)		# stack high
+    movq 248(%rcx), %r9
+    movq %r9, 0x10(%r8)		# stack low
+    movq 256(%rcx), %r9
+    movq %r9, 0x1478(%r8)	# stack guard
+    movq %rdx, %rax
     jmp *72(%rcx)

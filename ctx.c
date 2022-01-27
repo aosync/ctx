@@ -8,7 +8,7 @@ struct ctx{
 #if defined(CTX_AMD64_SYSV)
 	char regs[64]; /* rbx, rsp, rbp, r[4], rip */
 #elif defined(CTX_AMD64_MS)
-	char regs[240]; /* rbx, rbp, rdi, rsi, rsp, r[4], rip, xmm[10] */
+	char regs[264]; /* rbx, rbp, rdi, rsi, rsp, r[4], rip, xmm[10], stack {high,low,guard} */
 #endif
 	struct ctx *returnback;
 };
