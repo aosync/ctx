@@ -1,17 +1,15 @@
-	.intel_syntax noprefix
-	.text
 	.global ctx_save
 	.type ctx_save, @function
 ctx_save:
-	MOV qword ptr[RDI], RBX
-	LEA RCX, [RSP+8]
-	MOV qword ptr[RDI+8], RCX
-	MOV qword ptr[RDI+16], RBP
-	MOV qword ptr[RDI+24], R12
-	MOV qword ptr[RDI+32], R13
-	MOV qword ptr[RDI+40], R14
-	MOV qword ptr[RDI+48], R15
-	MOV RCX, qword ptr[RSP]
-	MOV qword ptr[RDI+56], RCX
-	XOR RAX, RAX
-	RET
+	movq %rbx, (%rdi)
+	leaq 8(%rsp), %rcx
+	movq %rcx, 8(%rdi)
+	movq %rbp, 16(%rdi)
+	movq %r12, 24(%rdi)
+	movq %r13, 32(%rdi)
+	movq %r14, 40(%rdi)
+	movq %r15, 48(%rdi)
+	movq (%rsp), %rcx
+	movq %rcx, 56(%rdi)
+	xorq %rax, %rax
+	ret
