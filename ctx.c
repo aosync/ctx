@@ -26,6 +26,8 @@ struct ctx *
 ctx_create(void)
 {
 	struct ctx *ctx = malloc(sizeof(struct ctx));
+	if (ctx == NULL)
+		return NULL;
 	memset(ctx, 0, sizeof(struct ctx));
 	return ctx;
 }
