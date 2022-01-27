@@ -18,6 +18,7 @@ int main() {
 
     struct ctx *back = ctx_create();
     ctx_link_to(ctx, end, (void (*)(void*))first, NULL);
+    printf("got here\n");
 
     ctx_switch(back, ctx);
 

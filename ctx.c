@@ -9,9 +9,16 @@ thread_local void (*_ctx_fun)(void*) = NULL;
 thread_local void *_ctx_args = NULL;
 
 struct ctx{
-#if defined(__amd64__)
+#if defined(CTX_AMD64_SYSV)
 #define ctx_stack_to(x) asm volatile ("mov %0, %%rsp" : : "r"(x))
 	char regs[64]; /* rbx, rsp, rbp, r[4], rip */
+#elif defined(CTX_AMD64_MS)
+#if defined(MVC_VER)
+#define ctx_stack_to(x) __asm mov rsp, x
+#else
+#define ctx_stack_to(x) asm volatile ("mov %0, %%rsp" : : "r"(x))
+#endif
+	char regs[240]; /* rbx, rbp, rdi, rsi, rsp, r[4], xmm[10] */
 #endif
 	struct ctx *returnback;
 };
