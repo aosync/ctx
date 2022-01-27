@@ -1,10 +1,40 @@
 #include "ctx.h"
 
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 thread_local struct ctx *_ctx_new = NULL;
 thread_local void (*_ctx_fun)(void*) = NULL;
 thread_local void *_ctx_args = NULL;
+
+struct ctx{
+#if defined(__amd64__)
+#define ctx_stack_to(x) asm volatile ("mov %0, %%rsp" : : "r"(x))
+	char regs[64]; /* rbx, rsp, rbp, r[4], rip */
+#endif
+	struct ctx *returnback;
+};
+
+size_t
+ctx_ctx_size(void)
+{
+	return sizeof(struct ctx);
+}
+
+struct ctx *
+ctx_create(void)
+{
+	struct ctx *ctx = malloc(sizeof(struct ctx));
+	memset(ctx, 0, sizeof(struct ctx));
+	return ctx;
+}
+
+void
+ctx_destroy(struct ctx *ctx)
+{
+	free(ctx);
+}
 
 void
 ctx_link_to(struct ctx *ctx, char *stack, void (*fun)(void*), void *args)

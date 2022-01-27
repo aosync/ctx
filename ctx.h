@@ -3,20 +3,20 @@
 
 #include <stdlib.h>
 #include <stdint.h>
-#include <threads.h>
+#include "threadlocal.h"
 
-struct ctx{
-#if defined(__amd64__)
-#define ctx_stack_to(x) asm volatile ("mov %0, %%rsp" : : "r"(x))
-	char regs[64]; /* rbx, rsp, rbp, r[4], rip */
-#endif
-	struct ctx *returnback;
-};
+struct ctx;
 
 extern thread_local struct ctx *_ctx_new;
 extern thread_local void (*_ctx_fun)(void*);
 extern thread_local void *_ctx_args;
 
+
+/*	struct ctx has to be opaque because of the different ABIs,
+	so allocation functions are provided */
+size_t ctx_ctx_size(void);
+struct ctx *ctx_create(void);
+void ctx_destroy(struct ctx *ctx);
 
 void ctx_link_to(struct ctx *ctx, char *stack, void (*fun)(void*), void *args);
 void ctx_jmp(struct ctx *ctx, int sig);
