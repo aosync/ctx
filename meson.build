@@ -17,21 +17,23 @@ asdict = {
 
 cpu = target_machine.cpu_family()
 os = target_machine.system()
-abi = abidict['@0@_@1@'.format(cpu, os)]
+abi = abidict[cpu + '_' + os]
 
 cc = meson.get_compiler('c')
-as = asdict['@0@_@1@'.format(cpu, cc.get_id())]
+as = asdict[cpu + '_' + cc.get_id()]
 
-asname = '@0@_@1@'.format(abi, as[0])
+asm_path = abi + '_' + as[0]
 
 ctx_sources = [
-	    'arch' / asname / 'ctx_save' + as[1],
-	    'arch' / asname / 'ctx_jmp' + as[1],
+	    'arch' / asm_path / 'ctx_save' + as[1],
+	    'arch' / asm_path / 'ctx_jmp' + as[1],
 	    'ctx.c'
 ]
 
+message('ctx: using abi', asm_path)
+
 ctx_inc = include_directories('.')
-ctx_lib = static_library('ctx', ctx_sources, include_directories : ctx_inc, c_args : ['-DCTX_@0@'.format(abi).to_upper()])
+ctx_lib = static_library('ctx', ctx_sources, include_directories : ctx_inc, c_args : [('-DCTX_' + abi).to_upper()])
 ctx_dep = declare_dependency(link_with : ctx_lib, include_directories : ctx_inc)
 
 executable('ctxmain', 'main.c', dependencies : ctx_dep)
