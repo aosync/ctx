@@ -21,7 +21,7 @@ ctx_jmp PROC
     movaps xmm14, [rcx+208]
     movaps xmm15, [rcx+224]
     mov rax, rdx
-    jmp [rcx+72]
+    jmp qword ptr [rcx+72]
 ctx_jmp ENDP
 
 END
