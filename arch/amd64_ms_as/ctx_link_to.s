@@ -15,7 +15,7 @@ ctx_link_to:
 	movq %r11, 72(%rcx)	# ctx_wrap2 in rip
 	ret
 ctx_wrap2:
-	subq $16, %rsp
+	subq $32, %rsp
 	andq $~15, %rsp
 	movq %rsi, %rcx		# ctx in 0
 	movq %rbx, %rdx		# fun in 1

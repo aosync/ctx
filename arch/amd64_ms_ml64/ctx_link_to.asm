@@ -3,7 +3,7 @@
 EXTERN _ctx_wrap: PROC
 
 ctx_wrap2 PROC
-	sub rsp, 16
+	sub rsp, 32
 	and rsp, -16	; TODO: check if -16 is ok
 	mov rcx, rsi	; ctx in 0
 	mov rdx, rbx	; fun in 1
