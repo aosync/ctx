@@ -20,13 +20,13 @@ ctx_jmp PROC
     movaps xmm13, [rcx+192]
     movaps xmm14, [rcx+208]
     movaps xmm15, [rcx+224]
-    mov r8, gs:[0x30]	; TIB pointer
+    mov r8, gs:[30h]	; TIB pointer
     mov r9, [rcx+240]
-    mov [r8+0x8], r9	; stack high
+    mov [r8+8h], r9	; stack high
     mov r9, [rcx+248]
-    mov [r8+0x10], r9	; stack low
+    mov [r8+10h], r9	; stack low
     mov r9, [rcx+256]
-    mov [r8+0x1478], r9	; stack guard
+    mov [r8+1478h], r9	; stack guard
     mov rax, rdx
     jmp qword ptr [rcx+72]
 ctx_jmp ENDP

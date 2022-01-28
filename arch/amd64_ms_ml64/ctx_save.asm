@@ -23,12 +23,12 @@ ctx_save PROC
     movaps [rcx+192], xmm13
     movaps [rcx+208], xmm14
     movaps [rcx+224], xmm15
-    mov r8, gs:[0x30]	; TIB pointer
-    mov r9, [r8+0x8]
+    mov r8, gs:[30h]	; TIB pointer
+    mov r9, [r8+8h]
     mov [rcx+240], r9	; stack high
-    mov r9, [r8+0x10]
+    mov r9, [r8+10h]
     mov [rcx+248], r9	; stack low
-    mov r9, [r8+0x1478]
+    mov r9, [r8+1478h]
     mov [rcx+256], r9	; stack guard
     xor rax, rax
     ret
