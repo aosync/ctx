@@ -11,10 +11,10 @@ ctx_link_to:
 	movq %r8, (%rcx)	# fun in rbx
 	movq %r9, 16(%rcx)	# args in rdi
 	movq %rcx, 24(%rcx)	# ctx in rsi
-	leaq ctx_wrap2(%rip), %r11
-	movq %r11, 72(%rcx)	# ctx_wrap2 in rip
+	leaq __ctx_wrap(%rip), %r11
+	movq %r11, 72(%rcx)	# __ctx_wrap in rip
 	ret
-ctx_wrap2:
+__ctx_wrap:
 	subq $32, %rsp
 	andq $~15, %rsp
 	movq %rsi, %rcx		# ctx in 0

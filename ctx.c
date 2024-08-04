@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include <string.h>
 
-struct ctx{
-#if defined(CTX_AMD64_SYSV)
+struct ctx {
+#if defined(CTX_X86_64_SYSV)
 	char regs[64]; /* rbx, rsp, rbp, r[4], rip */
-#elif defined(CTX_AMD64_MS)
+#elif defined(CTX_X86_64_MS)
 	char regs[264]; /* rbx, rbp, rdi, rsi, rsp, r[4], rip, xmm[10], stack {high,low,guard} */
 #endif
 	struct ctx *returnback;
@@ -39,7 +39,7 @@ void
 ctx_switch(struct ctx *from, struct ctx *to)
 {
 	to->returnback = from;
-	if(!ctx_save(from))
+	if (!ctx_save(from))
 		ctx_jmp(to, 1);
 }
 
