@@ -4,6 +4,13 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <sys/mman.h>
+#include <unistd.h>
+#endif
+
 struct ctx {
 #if defined(CTX_X86_64_SYSV)
 	char regs[64]; /* rbx, rsp, rbp, r[4], rip */
@@ -13,11 +20,9 @@ struct ctx {
 	struct ctx *returnback;
 };
 
-size_t
-ctx_ctx_size(void)
-{
-	return sizeof(struct ctx);
-}
+
+void ctx_link_to(struct ctx *ctx, char *stackd[], void (*fun)(void*), void *args);
+void _ctx_wrap(struct ctx *ctx, void (*fun)(void*), void *args);
 
 struct ctx *
 ctx_create(void)
@@ -25,7 +30,9 @@ ctx_create(void)
 	struct ctx *ctx = malloc(sizeof(struct ctx));
 	if (ctx == NULL)
 		return NULL;
-	memset(ctx, 0, sizeof(struct ctx));
+
+	*ctx = (struct ctx) {};
+	
 	return ctx;
 }
 
@@ -33,6 +40,13 @@ void
 ctx_destroy(struct ctx *ctx)
 {
 	free(ctx);
+}
+
+void
+ctx_link(struct ctx *ctx, struct ctx_stack *stack, void (*fun)(void*), void *args)
+{
+	char *stackd[3] = {stack->high, stack->low, stack->low};
+	ctx_link_to(ctx, stackd, fun, args);
 }
 
 void
@@ -48,4 +62,43 @@ _ctx_wrap(struct ctx *ctx, void (*fun)(void*), void *args)
 {
 	fun(args);
 	ctx_switch(ctx, ctx->returnback);
+}
+
+static size_t page_size()
+{
+#ifdef _WIN32
+    SYSTEM_INFO si;
+    GetSystemInfo(&si);
+    return si.dwPageSize;
+#else
+    return sysconf(_SC_PAGESIZE);
+#endif
+}
+
+void
+ctx_stack_init(struct ctx_stack *stack, size_t size)
+{
+	size_t page = page_size();
+	size = (size + page - 1) / page * page;
+
+#ifdef _WIN32
+	char *low = malloc(size);
+#else
+	char *low = (char*)mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_ANON|MAP_PRIVATE|MAP_STACK, -1, 0);
+#endif
+
+	*stack = (struct ctx_stack) {
+		.high = low + size,
+		.low = low,
+	};
+}
+
+void
+ctx_stack_finish(struct ctx_stack *stack)
+{
+#ifdef _WIN32
+	free(stack->low);
+#else
+	munmap(stack->low, (size_t)(stack->high - stack->low));
+#endif
 }

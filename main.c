@@ -2,47 +2,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef __OpenBSD__
-#include <sys/mman.h>
-#endif
-
-void second() {
-    printf("second\n");
-}
-
 void first(int *i) {
-    second();
-    printf("first %d\n", *i);          // does not print
+    printf("Called %d\n", *i);
 }
 
 int main() {
-    #ifdef __OpenBSD__
-    char *stack = mmap(NULL, 1024*9, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_STACK|MAP_ANON, -1, 0);
-    #else
-    char *stack = malloc(1024*9);
-    #endif
-    char *end = stack + 8196;
+    int i = 42;
+
+    // Initiate the stack
+    struct ctx_stack stack;
+    ctx_stack_init(&stack, 8 * 1024);
+
+    // Create the foreign ctx and link it to the stack and function
     struct ctx *ctx = ctx_create();
+    ctx_link(ctx, &stack, (void (*)(void*))first, &i);
+    printf("Linked!\n");
 
-    int i = 43;
-
-
-    struct ctx_stackd s;
-    s.stack_addr[CTX_STACK_HIGH] = end;
-    s.stack_addr[CTX_STACK_LOW] = stack;
-    s.stack_addr[CTX_STACK_GUARD] = stack + 1024;
+    // Create the ctx for the current context
     struct ctx *back = ctx_create();
-    ctx_link_to(ctx, &s, (void (*)(void*))first, &i);
-    printf("got here\n");
 
+    // Switch to the foreign ctx
     ctx_switch(back, ctx);
 
+    // ... foreign ctx yields back automatically when it returns
+
+    // Destroy the contexts
     ctx_destroy(back);
     ctx_destroy(ctx);
-    #ifdef __OpenBSD__
-    munmap(stack, 1024*9);
-    #else
-    free(stack);
-    #endif
+
+    // Deallocate the stack
+    ctx_stack_finish(&stack);
     return 0;
 }
