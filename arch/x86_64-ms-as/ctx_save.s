@@ -1,5 +1,4 @@
 	.global ctx_save
-	.type ctx_save, @function
 ctx_save:
 	movq %rbx, (%rcx)
 	movq %rbp, 8(%rcx)

@@ -1,5 +1,4 @@
     .global ctx_jmp
-    .type ctx_jmp, @function
 ctx_jmp:
     movq (%rcx), %rbx
     movq 8(%rcx), %rbp

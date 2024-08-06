@@ -1,5 +1,4 @@
 	.global ctx_link_to
-	.type ctx_link_to, @function
 ctx_link_to:
 	movq (%rdx), %r11
 	movq %r11, 240(%rcx)	# stack high

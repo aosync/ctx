@@ -4,6 +4,7 @@
 
 void first(int *i) {
     printf("Called %d\n", *i);
+    *i += 27;
 }
 
 int main() {
@@ -12,6 +13,7 @@ int main() {
     // Initiate the stack
     struct ctx_stack stack;
     ctx_stack_init(&stack, 8 * 1024);
+    printf("Created stack %p %p\n", stack.low, stack.high);
 
     // Create the foreign ctx and link it to the stack and function
     struct ctx *ctx = ctx_create();
@@ -25,6 +27,7 @@ int main() {
     ctx_switch(back, ctx);
 
     // ... foreign ctx yields back automatically when it returns
+    printf("Returned to parent! %d\n", i);
 
     // Destroy the contexts
     ctx_destroy(back);
@@ -32,5 +35,7 @@ int main() {
 
     // Deallocate the stack
     ctx_stack_finish(&stack);
+
+    printf("Finished all!\n");
     return 0;
 }

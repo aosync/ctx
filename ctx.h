@@ -6,6 +6,7 @@
 struct ctx_stack {
 	char *high;
 	char *low;
+	char *guard;
 };
 
 struct ctx;

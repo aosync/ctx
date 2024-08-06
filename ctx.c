@@ -45,7 +45,7 @@ ctx_destroy(struct ctx *ctx)
 void
 ctx_link(struct ctx *ctx, struct ctx_stack *stack, void (*fun)(void*), void *args)
 {
-	char *stackd[3] = {stack->high, stack->low, stack->low};
+	char *stackd[3] = {stack->high, stack->low, stack->guard};
 	ctx_link_to(ctx, stackd, fun, args);
 }
 
@@ -82,14 +82,17 @@ ctx_stack_init(struct ctx_stack *stack, size_t size)
 	size = (size + page - 1) / page * page;
 
 #ifdef _WIN32
-	char *low = malloc(size);
+	char *guard = VirtualAlloc(NULL, size + page, MEM_COMMIT, PAGE_READWRITE);
+	char *low = guard + page;
 #else
-	char *low = (char*)mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_ANON|MAP_PRIVATE|MAP_STACK, -1, 0);
+	char *guard = (char*)mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_ANON|MAP_PRIVATE|MAP_STACK, -1, 0);
+	char *low = guard;
 #endif
 
 	*stack = (struct ctx_stack) {
 		.high = low + size,
 		.low = low,
+		.guard = guard,
 	};
 }
 
@@ -97,8 +100,8 @@ void
 ctx_stack_finish(struct ctx_stack *stack)
 {
 #ifdef _WIN32
-	free(stack->low);
+	VirtualFree(stack->guard, 0, MEM_DECOMMIT | MEM_RELEASE);
 #else
-	munmap(stack->low, (size_t)(stack->high - stack->low));
+	munmap(stack->guard, (size_t)(stack->high - stack->guard));
 #endif
 }
